@@ -10,10 +10,13 @@ app.append(header);
 
 const buttonemoji = "💰";
 let counter: number = 0;
-let auto_increase_number: number = 1;
+let auto_increase_number: number = 0;
+let upgrade_cost:number = 10;
 
 const button = document.createElement("button");
-const number_display = document.createElement("number_display");
+const number_display = document.createElement("div");
+const increase_number = document.createElement("div");
+const upgrade = document.createElement("button");
 button.innerHTML = buttonemoji;
 number_display.innerHTML = `Money: ${counter}`;
 
@@ -22,26 +25,31 @@ button.addEventListener("click", () => {
 });
 app.append(button);
 
+upgrade.addEventListener("click", () => {
+  auto_increase_number += 1;
+  counter -= upgrade_cost
+  upgrade_cost *= 1.1;
+});
+app.append(button);
+
 function Autoclick() {
   counter += auto_increase_number;
 }
 setInterval(Autoclick, 1000);
 
-
-let lastTime = 0;
-let fps = 0;
-function animate(timestamp: number) {
-  const now = timestamp;
-  const deltaTime = now - lastTime;
-  lastTime = now;
-  fps = 1000 / deltaTime;
+function animate() {
+  if (counter < upgrade_cost) upgrade.disabled = true;
+  else upgrade.disabled = false;
   // update counter
   counter = Number(counter.toFixed(2));
   number_display.innerText = `Money: ${counter}`;
+  upgrade_cost = Number(upgrade_cost.toFixed(2));
+  upgrade.innerHTML = "Upgrade" + `(Cost: ${upgrade_cost})`;
+  increase_number.innerText = `Auto Increase ${auto_increase_number} per second`
   requestAnimationFrame(animate);
 }
 requestAnimationFrame(animate);
 
 app.append(number_display);
-
-
+app.append(increase_number);
+app.append(upgrade);
