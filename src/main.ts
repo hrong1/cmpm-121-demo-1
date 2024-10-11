@@ -2,7 +2,7 @@ import "./style.css";
 
 const app: HTMLDivElement = document.querySelector("#app")!;
 
-const gameName = "A Clicking Game";
+const gameName = "Earn Money";
 document.title = gameName;
 const header = document.createElement("h1");
 header.innerHTML = gameName;
@@ -11,7 +11,7 @@ app.append(header);
 // number data
 let counter: number = 1000;
 let total_increase: number = 0;
-const price_increase_rate = 1.15
+const price_increase_rate = 1.15;
 
 // clicking button
 const buttonemoji = "💰";
@@ -20,6 +20,11 @@ button.innerHTML = buttonemoji;
 button.addEventListener("click", () => {
   counter += 1;
 });
+// resize clickbutton
+button.style.width = '100px'; 
+button.style.height = '100px';
+button.style.fontSize = '50px';
+button.style.padding = '0';
 app.append(button);
 
 // counter display
@@ -102,31 +107,46 @@ function animate() {
   else upgrade_C.disabled = false;
   // update counter
   counter = Number(counter.toFixed(2));
-  number_display.innerText = `Money: ${counter}`;
+  number_display.innerText = `Money: ${counter} dollars`;
   // update upgrade A
   upgrade_A.innerHTML =
-    "0.1 units/sec" +
+    "A Cat 🐈" +
+    "<br/>" +
+    "0.1 dollars/sec" +
+    "<br/>" +
     `(Cost: ${upgrade_cost_A})` +
     "<br/>" +
     `growth rate: ${auto_increase_number_A}` +
     "<br/> " +
-    `number of item: ${number_items_A}`;
+    `number of item: ${number_items_A}`+
+    "<br/>" +
+    "What do you expect a cat to do?";
   // update upgrade B
   upgrade_B.innerHTML =
-    "2 units/sec" +
+    "A Worker 👷" +
+    "<br/>" +
+    "2 dollars/sec" +
+    "<br/>" +
     `(Cost: ${upgrade_cost_B})` +
     "<br/>" +
     `growth rate: ${auto_increase_number_B}` +
     "<br/> " +
-    `number of item: ${number_items_B}`;
+    `number of item: ${number_items_B}`+
+    "<br/>" +
+    "Hire a worker to help you make money";
   // update upgrade C
   upgrade_C.innerHTML =
-    "50 units/sec" +
+    "Company 🏢" +
+    "<br/>" +
+    "50 dollars/sec" +
+    "<br/>" +
     `(Cost: ${upgrade_cost_C})` +
     "<br/>" +
     `growth rate: ${auto_increase_number_C}` +
     "<br/> " +
-    `number of item: ${number_items_C}`;
+    `number of item: ${number_items_C}`+
+    "<br/>" +
+    "Buy a company to help you make money";
   // total number increase
   increase_number.innerText = `Auto Increase ${total_increase}/second`;
   // fix number
