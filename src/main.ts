@@ -21,16 +21,16 @@ button.addEventListener("click", () => {
   counter += 1;
 });
 // resize clickbutton
-button.style.width = '100px'; 
-button.style.height = '100px';
-button.style.fontSize = '50px';
-button.style.padding = '0';
+button.style.width = "100px";
+button.style.height = "100px";
+button.style.fontSize = "50px";
+button.style.padding = "0";
 app.append(button);
 
 // counter display
 const number_display = document.createElement("div");
 number_display.innerHTML = `Money: ${counter}`;
-number_display.style.fontSize = '20px';
+number_display.style.fontSize = "20px";
 app.append(number_display);
 
 // number increase per second
@@ -39,17 +39,35 @@ increase_number.innerText = `${total_increase} dollars/sec`;
 app.append(increase_number);
 
 interface Item {
-  name: string,
-  cost: number,
-  rate: number,
-  describe: string,
+  name: string;
+  cost: number;
+  rate: number;
+  describe: string;
   purchases: number;
-};
+}
 // List of item
-const availableItems : Item[] = [
-  {name: "A Cat 🐈", cost: 10, rate: 0.1, describe: "What do you expect a cat to do?", purchases: 0},
-  {name: "A Worker 👷", cost: 100, rate: 2, describe: "Hire a worker to help you make money", purchases: 0},
-  {name: "Company 🏢", cost: 1000, rate: 50, describe: "Buy a company to help you make money", purchases: 0}
+const availableItems: Item[] = [
+  {
+    name: "A Cat 🐈",
+    cost: 10,
+    rate: 0.1,
+    describe: "What do you expect a cat to do?",
+    purchases: 0,
+  },
+  {
+    name: "A Worker 👷",
+    cost: 100,
+    rate: 2,
+    describe: "Hire a worker to help you make money",
+    purchases: 0,
+  },
+  {
+    name: "Company 🏢",
+    cost: 1000,
+    rate: 50,
+    describe: "Buy a company to help you make money",
+    purchases: 0,
+  },
 ];
 
 const TrackButtons: { button: HTMLButtonElement; cost: number }[] = [];
@@ -58,7 +76,14 @@ const TrackButtons: { button: HTMLButtonElement; cost: number }[] = [];
 function addUpgradeButton() {
   availableItems.forEach((item) => {
     const UpgradeButton = document.createElement("button");
-    UpgradeButton.innerHTML = `${item.name} (${item.purchases})` + "<br/>" + `Cost: ${item.cost.toFixed(2)} dollars`  + "<br/>" + `Growth rate: ${item.rate} dollars/sec` + "<br/>"+ `${item.describe}`;
+    UpgradeButton.innerHTML =
+      `${item.name} (${item.purchases})` +
+      "<br/>" +
+      `Cost: ${item.cost.toFixed(2)} dollars` +
+      "<br/>" +
+      `Growth rate: ${item.rate} dollars/sec` +
+      "<br/>" +
+      `${item.describe}`;
     TrackButtons.push({ button: UpgradeButton, cost: item.cost });
     UpgradeButton.addEventListener("click", () => {
       if (counter >= item.cost) {
@@ -66,15 +91,23 @@ function addUpgradeButton() {
         counter -= item.cost;
         item.cost *= price_rate;
         item.purchases++;
-        UpgradeButton.innerHTML = `${item.name} (${item.purchases})` + "<br/>" + `Cost: ${item.cost.toFixed(2)} dollars`  + "<br/>" + `Growth rate: ${item.rate} dollars/sec` + "<br/>"+ `${item.describe}`;
+        UpgradeButton.innerHTML =
+          `${item.name} (${item.purchases})` +
+          "<br/>" +
+          `Cost: ${item.cost.toFixed(2)} dollars` +
+          "<br/>" +
+          `Growth rate: ${item.rate} dollars/sec` +
+          "<br/>" +
+          `${item.describe}`;
         const buttonIndex = TrackButtons.findIndex(
-          (Upgrade) => Upgrade.button == UpgradeButton);
+          (Upgrade) => Upgrade.button == UpgradeButton,
+        );
         TrackButtons[buttonIndex].cost = item.cost;
-        UpdateButtonState()
+        UpdateButtonState();
       }
     });
     app.append(UpgradeButton);
-  })
+  });
 }
 addUpgradeButton();
 
@@ -85,15 +118,15 @@ function UpdateButtonState() {
   });
 }
 
-
 let lastTime = performance.now();
 requestAnimationFrame(function increaseCounter() {
   const currentTime = performance.now();
   const deltaTime = currentTime - lastTime;
   counter += (deltaTime / 1000) * total_increase;
   //counter += total_increase;
-  UpdateButtonState()
-  number_display.innerHTML = `${(Math.floor(counter * 100) / 100).toString()}` + " dollars";
+  UpdateButtonState();
+  number_display.innerHTML =
+    `${(Math.floor(counter * 100) / 100).toString()}` + " dollars";
   increase_number.innerHTML = `${Math.floor(total_increase * 100) / 100} dollars/sec`;
   lastTime = currentTime;
   requestAnimationFrame(increaseCounter);
