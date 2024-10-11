@@ -2,7 +2,7 @@ import "./style.css";
 
 const app: HTMLDivElement = document.querySelector("#app")!;
 
-const gameName = "Earn Money";
+const gameName = "💸Earn Money💸";
 document.title = gameName;
 const header = document.createElement("h1");
 header.innerHTML = gameName;
@@ -11,7 +11,7 @@ app.append(header);
 // number data
 let counter: number = 1000;
 let total_increase: number = 0;
-const price_increase_rate = 1.15;
+const price_rate = 1.15;
 
 // clicking button
 const buttonemoji = "💰";
@@ -30,127 +30,71 @@ app.append(button);
 // counter display
 const number_display = document.createElement("div");
 number_display.innerHTML = `Money: ${counter}`;
+number_display.style.fontSize = '20px';
 app.append(number_display);
 
 // number increase per second
 const increase_number = document.createElement("div");
+increase_number.innerText = `${total_increase} dollars/sec`;
 app.append(increase_number);
 
-// Upgrade_A
-let upgrade_cost_A = 10;
-let auto_increase_number_A: number = 0;
-let number_items_A = 0;
-const upgrade_A = document.createElement("button");
-upgrade_A.addEventListener("click", () => {
-  auto_increase_number_A += 0.1;
-  total_increase += 0.1;
-  counter -= upgrade_cost_A;
-  upgrade_cost_A *= price_increase_rate;
-  number_items_A += 1;
-  // number fix
-  upgrade_cost_A = Number(upgrade_cost_A.toFixed(2));
-  total_increase = Number(total_increase.toFixed(2));
-  auto_increase_number_A = Number(auto_increase_number_A.toFixed(2));
-});
-app.append(upgrade_A);
+interface Item {
+  name: string,
+  cost: number,
+  rate: number,
+  describe: string,
+  purchases: number;
+};
+// List of item
+const availableItems : Item[] = [
+  {name: "A Cat 🐈", cost: 10, rate: 0.1, describe: "What do you expect a cat to do?", purchases: 0},
+  {name: "A Worker 👷", cost: 100, rate: 2, describe: "Hire a worker to help you make money", purchases: 0},
+  {name: "Company 🏢", cost: 1000, rate: 50, describe: "Buy a company to help you make money", purchases: 0}
+];
 
-// Upgrade_B
-let upgrade_cost_B = 100;
-let auto_increase_number_B: number = 0;
-let number_items_B = 0;
-const upgrade_B = document.createElement("button");
-upgrade_B.addEventListener("click", () => {
-  auto_increase_number_B += 2;
-  total_increase += 2;
-  counter -= upgrade_cost_B;
-  upgrade_cost_B *= price_increase_rate;
-  number_items_B += 1;
-  //number fix
-  upgrade_cost_B = Number(upgrade_cost_B.toFixed(2));
-  total_increase = Number(total_increase.toFixed(2));
-  auto_increase_number_B = Number(auto_increase_number_B.toFixed(2));
-});
-app.append(upgrade_B);
+const TrackButtons: { button: HTMLButtonElement; cost: number }[] = [];
 
-// Upgrade_C
-let upgrade_cost_C = 1000;
-let auto_increase_number_C: number = 0;
-let number_items_C = 0;
-const upgrade_C = document.createElement("button");
-upgrade_C.addEventListener("click", () => {
-  auto_increase_number_C += 50;
-  total_increase += 50;
-  counter -= upgrade_cost_C;
-  upgrade_cost_C *= price_increase_rate;
-  number_items_C += 1;
-  //number fix
-  upgrade_cost_C = Number(upgrade_cost_C.toFixed(2));
-  total_increase = Number(total_increase.toFixed(2));
-  auto_increase_number_C = Number(auto_increase_number_C.toFixed(2));
-});
-app.append(upgrade_C);
-
-function Autoclick() {
-  counter += total_increase;
+// Add upgradebutton
+function addUpgradeButton() {
+  availableItems.forEach((item) => {
+    const UpgradeButton = document.createElement("button");
+    UpgradeButton.innerHTML = `${item.name} (${item.purchases})` + "<br/>" + `Cost: ${item.cost.toFixed(2)} dollars`  + "<br/>" + `Growth rate: ${item.rate} dollars/sec` + "<br/>"+ `${item.describe}`;
+    TrackButtons.push({ button: UpgradeButton, cost: item.cost });
+    UpgradeButton.addEventListener("click", () => {
+      if (counter >= item.cost) {
+        total_increase += item.rate;
+        counter -= item.cost;
+        item.cost *= price_rate;
+        item.purchases++;
+        UpgradeButton.innerHTML = `${item.name} (${item.purchases})` + "<br/>" + `Cost: ${item.cost.toFixed(2)} dollars`  + "<br/>" + `Growth rate: ${item.rate} dollars/sec` + "<br/>"+ `${item.describe}`;
+        const buttonIndex = TrackButtons.findIndex(
+          (Upgrade) => Upgrade.button == UpgradeButton);
+        TrackButtons[buttonIndex].cost = item.cost;
+        UpdateButtonState()
+      }
+    });
+    app.append(UpgradeButton);
+  })
 }
-setInterval(Autoclick, 1000);
+addUpgradeButton();
 
-function animate() {
-  // disable update A
-  if (counter < upgrade_cost_A) upgrade_A.disabled = true;
-  else upgrade_A.disabled = false;
-  // disable update B
-  if (counter < upgrade_cost_B) upgrade_B.disabled = true;
-  else upgrade_B.disabled = false;
-  // disable update C
-  if (counter < upgrade_cost_C) upgrade_C.disabled = true;
-  else upgrade_C.disabled = false;
-  // update counter
-  counter = Number(counter.toFixed(2));
-  number_display.innerText = `Money: ${counter} dollars`;
-  // update upgrade A
-  upgrade_A.innerHTML =
-    "A Cat 🐈" +
-    "<br/>" +
-    "0.1 dollars/sec" +
-    "<br/>" +
-    `(Cost: ${upgrade_cost_A})` +
-    "<br/>" +
-    `growth rate: ${auto_increase_number_A}` +
-    "<br/> " +
-    `number of item: ${number_items_A}`+
-    "<br/>" +
-    "What do you expect a cat to do?";
-  // update upgrade B
-  upgrade_B.innerHTML =
-    "A Worker 👷" +
-    "<br/>" +
-    "2 dollars/sec" +
-    "<br/>" +
-    `(Cost: ${upgrade_cost_B})` +
-    "<br/>" +
-    `growth rate: ${auto_increase_number_B}` +
-    "<br/> " +
-    `number of item: ${number_items_B}`+
-    "<br/>" +
-    "Hire a worker to help you make money";
-  // update upgrade C
-  upgrade_C.innerHTML =
-    "Company 🏢" +
-    "<br/>" +
-    "50 dollars/sec" +
-    "<br/>" +
-    `(Cost: ${upgrade_cost_C})` +
-    "<br/>" +
-    `growth rate: ${auto_increase_number_C}` +
-    "<br/> " +
-    `number of item: ${number_items_C}`+
-    "<br/>" +
-    "Buy a company to help you make money";
-  // total number increase
-  increase_number.innerText = `Auto Increase ${total_increase}/second`;
-  // fix number
-  total_increase = Number(total_increase.toFixed(2));
-  requestAnimationFrame(animate);
+// update button state
+function UpdateButtonState() {
+  TrackButtons.forEach(({ button, cost }) => {
+    button.disabled = counter < cost;
+  });
 }
-requestAnimationFrame(animate);
+
+
+let lastTime = performance.now();
+requestAnimationFrame(function increaseCounter() {
+  const currentTime = performance.now();
+  const deltaTime = currentTime - lastTime;
+  counter += (deltaTime / 1000) * total_increase;
+  //counter += total_increase;
+  UpdateButtonState()
+  number_display.innerHTML = `${(Math.floor(counter * 100) / 100).toString()}` + " dollars";
+  increase_number.innerHTML = `${Math.floor(total_increase * 100) / 100} dollars/sec`;
+  lastTime = currentTime;
+  requestAnimationFrame(increaseCounter);
+});
