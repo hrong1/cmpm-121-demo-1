@@ -9,7 +9,7 @@ header.innerHTML = gameName;
 app.append(header);
 
 // number data
-let counter: number = 1000;
+let counter: number = 0;
 let total_increase: number = 0;
 const price_rate = 1.15;
 
@@ -66,6 +66,20 @@ const availableItems: Item[] = [
     cost: 1000,
     rate: 50,
     describe: "Buy a company to help you make money",
+    purchases: 0,
+  },
+  {
+    name: "Gold Mine⛏️",
+    cost: 5000,
+    rate: 200,
+    describe: "A Gold mine for the extraction of gold.",
+    purchases: 0,
+  },
+  {
+    name: "Wishing Star🌟",
+    cost: 10000,
+    rate: 1000,
+    describe: "Make a Wish?",
     purchases: 0,
   },
 ];
