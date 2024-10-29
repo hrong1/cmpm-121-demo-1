@@ -9,9 +9,9 @@ header.innerHTML = gameName;
 app.append(header);
 
 // number data
-let counter: number = 0;
-let total_increase: number = 0;
-const price_rate = 1.15;
+let counter: number = 0; // counter for money
+let total_increase: number = 0; // total number increase per second
+const price_rate = 1.15; // growth rate
 
 // clicking button
 const buttonemoji = "💰";
@@ -83,21 +83,30 @@ const availableItems: Item[] = [
     purchases: 0,
   },
 ];
-
+// use for track button state and disable it
 const TrackButtons: { button: HTMLButtonElement; cost: number }[] = [];
 
+// update button state
+function updateButtonState() {
+  TrackButtons.forEach(({ button, cost }) => {
+    button.disabled = counter < cost;
+  });
+}
+
+function generateUpgradeButtonHTML(item: Item): string {
+  return `
+    ${item.name} (${item.purchases})<br/>
+    Cost: ${item.cost.toFixed(2)} dollars<br/>
+    Growth rate: ${item.rate} dollars/sec<br/>
+    ${item.describe}
+  `;
+}
+
 // Add upgradebutton
-function addUpgradeButton() {
+function addUpgradeButtons() {
   availableItems.forEach((item) => {
     const UpgradeButton = document.createElement("button");
-    UpgradeButton.innerHTML =
-      `${item.name} (${item.purchases})` +
-      "<br/>" +
-      `Cost: ${item.cost.toFixed(2)} dollars` +
-      "<br/>" +
-      `Growth rate: ${item.rate} dollars/sec` +
-      "<br/>" +
-      `${item.describe}`;
+    UpgradeButton.innerHTML = generateUpgradeButtonHTML(item);
     TrackButtons.push({ button: UpgradeButton, cost: item.cost });
     UpgradeButton.addEventListener("click", () => {
       if (counter >= item.cost) {
@@ -105,32 +114,18 @@ function addUpgradeButton() {
         counter -= item.cost;
         item.cost *= price_rate;
         item.purchases++;
-        UpgradeButton.innerHTML =
-          `${item.name} (${item.purchases})` +
-          "<br/>" +
-          `Cost: ${item.cost.toFixed(2)} dollars` +
-          "<br/>" +
-          `Growth rate: ${item.rate} dollars/sec` +
-          "<br/>" +
-          `${item.describe}`;
+        UpgradeButton.innerHTML = generateUpgradeButtonHTML(item);
         const buttonIndex = TrackButtons.findIndex(
           (Upgrade) => Upgrade.button == UpgradeButton,
         );
         TrackButtons[buttonIndex].cost = item.cost;
-        UpdateButtonState();
+        updateButtonState();
       }
     });
     app.append(UpgradeButton);
   });
 }
-addUpgradeButton();
-
-// update button state
-function UpdateButtonState() {
-  TrackButtons.forEach(({ button, cost }) => {
-    button.disabled = counter < cost;
-  });
-}
+addUpgradeButtons();
 
 let lastTime = performance.now();
 requestAnimationFrame(function increaseCounter() {
@@ -138,7 +133,7 @@ requestAnimationFrame(function increaseCounter() {
   const deltaTime = currentTime - lastTime;
   counter += (deltaTime / 1000) * total_increase;
   //counter += total_increase;
-  UpdateButtonState();
+  updateButtonState();
   number_display.innerHTML =
     `${(Math.floor(counter * 100) / 100).toString()}` + " dollars";
   increase_number.innerHTML = `${Math.floor(total_increase * 100) / 100} dollars/sec`;
