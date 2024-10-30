@@ -101,7 +101,7 @@ function updateButtonText(item: Item): string {
     ${item.describe}
   `;
 }
- 
+
 // Add upgradebutton
 function addUpgradeButtons() {
   availableItems.forEach((item) => {
