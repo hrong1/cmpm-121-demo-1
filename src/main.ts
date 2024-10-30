@@ -10,33 +10,33 @@ app.append(header);
 
 // number data
 let counter: number = 0; // counter for money
-let total_increase: number = 0; // total number increase per second
-const price_rate = 1.15; // growth rate
+let totalIncrease: number = 0; // total number increase per second
+const priceRate = 1.15; // growth rate for item price
 
 // clicking button
-const buttonemoji = "💰";
-const button = document.createElement("button");
-button.innerHTML = buttonemoji;
-button.addEventListener("click", () => {
+const buttonEmoji = "💰";
+const emojiButton = document.createElement("button");
+emojiButton.innerHTML = buttonEmoji;
+emojiButton.addEventListener("click", () => {
   counter += 1;
 });
 // resize clickbutton
-button.style.width = "100px";
-button.style.height = "100px";
-button.style.fontSize = "50px";
-button.style.padding = "0";
-app.append(button);
+emojiButton.style.width = "100px";
+emojiButton.style.height = "100px";
+emojiButton.style.fontSize = "50px";
+emojiButton.style.padding = "0";
+app.append(emojiButton);
 
 // counter display
-const number_display = document.createElement("div");
-number_display.innerHTML = `Money: ${counter}`;
-number_display.style.fontSize = "20px";
-app.append(number_display);
+const numberDisplay = document.createElement("div");
+numberDisplay.innerHTML = `Money: ${counter}`;
+numberDisplay.style.fontSize = "20px";
+app.append(numberDisplay);
 
 // number increase per second
-const increase_number = document.createElement("div");
-increase_number.innerText = `${total_increase} dollars/sec`;
-app.append(increase_number);
+const increaseNumber = document.createElement("div");
+increaseNumber.innerText = `${totalIncrease} dollars/sec`;
+app.append(increaseNumber);
 
 interface Item {
   name: string;
@@ -84,16 +84,16 @@ const availableItems: Item[] = [
   },
 ];
 // use for track button state and disable it
-const TrackButtons: { button: HTMLButtonElement; cost: number }[] = [];
+const trackButtons: { button: HTMLButtonElement; cost: number }[] = [];
 
 // update button state
 function updateButtonState() {
-  TrackButtons.forEach(({ button, cost }) => {
+  trackButtons.forEach(({ button, cost }) => {
     button.disabled = counter < cost;
   });
 }
 
-function generateUpgradeButtonHTML(item: Item): string {
+function updateButtonText(item: Item): string {
   return `
     ${item.name} (${item.purchases})<br/>
     Cost: ${item.cost.toFixed(2)} dollars<br/>
@@ -101,42 +101,45 @@ function generateUpgradeButtonHTML(item: Item): string {
     ${item.describe}
   `;
 }
-
+ 
 // Add upgradebutton
 function addUpgradeButtons() {
   availableItems.forEach((item) => {
-    const UpgradeButton = document.createElement("button");
-    UpgradeButton.innerHTML = generateUpgradeButtonHTML(item);
-    TrackButtons.push({ button: UpgradeButton, cost: item.cost });
-    UpgradeButton.addEventListener("click", () => {
+    const upgradeButton = document.createElement("button");
+    upgradeButton.innerHTML = updateButtonText(item);
+    trackButtons.push({ button: upgradeButton, cost: item.cost });
+    upgradeButton.addEventListener("click", () => {
       if (counter >= item.cost) {
-        total_increase += item.rate;
+        totalIncrease += item.rate;
         counter -= item.cost;
-        item.cost *= price_rate;
+        item.cost *= priceRate;
         item.purchases++;
-        UpgradeButton.innerHTML = generateUpgradeButtonHTML(item);
-        const buttonIndex = TrackButtons.findIndex(
-          (Upgrade) => Upgrade.button == UpgradeButton,
+        upgradeButton.innerHTML = updateButtonText(item);
+        const buttonIndex = trackButtons.findIndex(
+          (Upgrade) => Upgrade.button == upgradeButton,
         );
-        TrackButtons[buttonIndex].cost = item.cost;
+        trackButtons[buttonIndex].cost = item.cost;
         updateButtonState();
       }
     });
-    app.append(UpgradeButton);
+    app.append(upgradeButton);
   });
 }
 addUpgradeButtons();
+
+// return a decimal number in string
+function decimalNumber(number: number): string {
+  return `${(Math.floor(number * 100) / 100).toString()}`;
+}
 
 let lastTime = performance.now();
 requestAnimationFrame(function increaseCounter() {
   const currentTime = performance.now();
   const deltaTime = currentTime - lastTime;
-  counter += (deltaTime / 1000) * total_increase;
-  //counter += total_increase;
+  counter += (deltaTime / 1000) * totalIncrease;
   updateButtonState();
-  number_display.innerHTML =
-    `${(Math.floor(counter * 100) / 100).toString()}` + " dollars";
-  increase_number.innerHTML = `${Math.floor(total_increase * 100) / 100} dollars/sec`;
+  numberDisplay.innerHTML = decimalNumber(counter) + "dollars";
+  increaseNumber.innerHTML = decimalNumber(totalIncrease) + " dollars/sec";
   lastTime = currentTime;
   requestAnimationFrame(increaseCounter);
 });
