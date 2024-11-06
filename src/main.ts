@@ -1,7 +1,7 @@
 import "./style.css";
 
 const app: HTMLDivElement = document.querySelector("#app")!;
- 
+
 const gameName = "💸Earn Money💸";
 document.title = gameName;
 const header = document.createElement("h1");
@@ -151,10 +151,10 @@ requestAnimationFrame(function increaseCounter() {
 
 const backgroundEmoji = "💵";
 function createEmoji() {
-  const emoji = document.createElement('div');
-  emoji.classList.add('emoji');
+  const emoji = document.createElement("div");
+  emoji.classList.add("emoji");
   emoji.textContent = backgroundEmoji;
-  emoji.style.left = Math.random() * 100 + '%';
+  emoji.style.left = Math.random() * 100 + "%";
   emoji.style.transform = `rotate(${Math.random() * 360}deg)`;
   app.appendChild(emoji);
 }
