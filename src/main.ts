@@ -1,7 +1,7 @@
 import "./style.css";
 
 const app: HTMLDivElement = document.querySelector("#app")!;
-
+ 
 const gameName = "💸Earn Money💸";
 document.title = gameName;
 const header = document.createElement("h1");
@@ -18,6 +18,7 @@ const buttonEmoji = "💰";
 const emojiButton = document.createElement("button");
 emojiButton.innerHTML = buttonEmoji;
 emojiButton.addEventListener("click", () => {
+  createEmoji();
   counter += 1;
 });
 // resize clickbutton
@@ -31,10 +32,14 @@ app.append(emojiButton);
 const numberDisplay = document.createElement("div");
 numberDisplay.innerHTML = `Money: ${counter}`;
 numberDisplay.style.fontSize = "20px";
+numberDisplay.style.position = "relative";
+numberDisplay.style.zIndex = "1";
 app.append(numberDisplay);
 
 // number increase per second
 const increaseNumber = document.createElement("div");
+increaseNumber.style.position = "relative";
+increaseNumber.style.zIndex = "1";
 increaseNumber.innerText = `${totalIncrease} dollars/sec`;
 app.append(increaseNumber);
 
@@ -138,8 +143,18 @@ requestAnimationFrame(function increaseCounter() {
   const deltaTime = currentTime - lastTime;
   counter += (deltaTime / 1000) * totalIncrease;
   updateButtonState();
-  numberDisplay.innerHTML = decimalNumber(counter) + "dollars";
+  numberDisplay.innerHTML = decimalNumber(counter) + " dollars";
   increaseNumber.innerHTML = decimalNumber(totalIncrease) + " dollars/sec";
   lastTime = currentTime;
   requestAnimationFrame(increaseCounter);
 });
+
+const backgroundEmoji = "💵";
+function createEmoji() {
+  const emoji = document.createElement('div');
+  emoji.classList.add('emoji');
+  emoji.textContent = backgroundEmoji;
+  emoji.style.left = Math.random() * 100 + '%';
+  emoji.style.transform = `rotate(${Math.random() * 360}deg)`;
+  app.appendChild(emoji);
+}
